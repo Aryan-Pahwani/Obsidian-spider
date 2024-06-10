@@ -3,7 +3,6 @@
 
 1. Drag the obsidian-spider.js script into your folder.
 2. Add in this bit to your <head> tag.
-
 <script src="obsidian-spider.js"></script>
 
  ```HTML
