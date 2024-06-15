@@ -1,4 +1,5 @@
 function spider(markdownFilePath) {
+    console.log("================================");
     fetch(markdownFilePath)
         .then(response => response.text())
             .then(text => {
@@ -85,24 +86,24 @@ function markdown(mdText) {
 
     // unordered list
     mdText = mdText.replace(/(.*)\-\s(?!\[.\])+(.*)/gm, (match, whitespace, content) => {
-        return `<li style="list-style-type: none;white-space: pre;">${whitespace}<span style="font-size:20px;">•</span> ${content}</li>`;
+        return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}<span style="font-size:20px;">•</span> ${content}</li>`;
     });
 
     // ordered list
     mdText = mdText.replace(/(.*)(\d)\.\s+(.*)/gm, (match, whitespace, index, content) => {
-        return `<li style="list-style-type: none;white-space: pre;">${whitespace}${index}. ${content}</li>`;
+        return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}${index}. ${content}</li>`;
     });
     
     // Task lists
     mdText = mdText.replace(/(.*)\-\s\[(.)\]+(.*)/gm, (match, whitespace, completion, content) => {
         if(completion!=" "){
-            return `<li style="list-style-type: none;white-space: pre;">${whitespace}<input checked type="checkbox">${content}</li>`;
+            return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}<input checked type="checkbox">${content}</li>`;
         }
         else {
-            return `<li style="list-style-type: none;white-space: pre;">${whitespace}<input type="checkbox">${content}</li>`;
+            return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}<input type="checkbox">${content}</li>`;
         }
     });
     
     // Return the resulting HTML
-    return `<pre>${mdText}</pre>`;
+    return `<div id="spider-textbox"><text>${mdText}</text></div>`;
 }
