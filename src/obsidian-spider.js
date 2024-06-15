@@ -32,13 +32,22 @@ function spider(markdownFilePath) {
 // Simple Markdown parser
 function markdown(mdText) {
     
-    // LATEX INTEGRATION // 
+    // LATEX INTEGRATION //
+    // $$ Display LaTeX $$ //
+        mdText = mdText.replace(/(\$\$)([\s\S]*?)\1/g, (match, _, content) => {
+            return katex.renderToString(content, {
+                throwOnError: false,
+                displayMode: true
+            });
+        }); 
+        
     // $ Inline LaTeX $
     mdText = mdText.replace(/(\$)([\s\S]*?)\1/g, (match, _, content) => {
         return katex.renderToString(content, {
-            throwOnError: true
+            throwOnError: false
         });
     });
+
 
 
     // Line Breaks
@@ -112,7 +121,7 @@ function markdown(mdText) {
     });
 
     // ordered list
-    mdText = mdText.replace(/^([\s]*)\d\.\s(?!\[.\])(.*)/gm, (match, whitespace, index, content) => {
+    mdText = mdText.replace(/^([\s]*)(\d)\.\s(?!\[.\])(.*)/gm, (match, whitespace, index, content) => {
         return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}${index}. ${content}</li>`;
     });
     
