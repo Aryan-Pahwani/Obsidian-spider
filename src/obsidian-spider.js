@@ -56,7 +56,7 @@ function markdown(mdText) {
     // H1-H6 # Headers
     mdText = mdText.replace(/^(#+)\s+(.*)$/gm, (match, hashes, content) => {
         const level = Math.min(hashes.length, 6); // Limit to H1-H6
-        return `<h${level}>${content}</h${level}>`;
+        return `<h${level} class="spider">${content}</h${level}>`;
     });
 
 
@@ -67,71 +67,71 @@ function markdown(mdText) {
 
     // **bolds**
     mdText = mdText.replace(/(\*\*|\_\_)([\s\S]*?)\1/g, (match, _, content) => {
-        return `<b>${content}</b>`;
+        return `<b class="spider">${content}</b>`;
     });
 
     // *italics*
     mdText = mdText.replace(/(\*|\_)([\s\S]*?)\1/g, (match, _, content) => {
-        return `<i>${content}</i>`;
+        return `<i class="spider">${content}</i>`;
     });
 
     // ~~Strikethrough~~
     mdText = mdText.replace(/(~~)([\s\S]*?)\1/g, (match, _, content) => {
-        return `<s>${content}</s>`;
+        return `<s class="spider">${content}</s>`;
     });
 
     // ==Highlights==
     mdText = mdText.replace(/(==)([\s\S]*?)\1/g, (match, _, content) => {
-        return `<mark>${content}</mark>`;
+        return `<mark class="spider">${content}</mark>`;
     });
 
     // %% Comments %%
     mdText = mdText.replace(/(%%)([\s\S]*?)\1/g, (match, _, content) => {
-        return `<text style="color: gray;">${content}</text>`;
+        return `<text class="spider">${content}</text>`;
     });
 
     // [[Internal Links]]
     mdText = mdText.replace(/\[\[([\S]*)\]\]/g, (match, content) => {
-        return `<a href="${content}">${content}</a>`;
+        return `<a href="${content}" class="spider">${content}</a>`;
     });
 
     // [[External Links]]
     mdText = mdText.replace(/(?<!!)\[([\S\s]*)\]\((\S*)\)/g, (match, content, link) => {
-        return `<a href="${link}">${content}</a>`;
+        return `<a href="${link}" class="spider">${content}</a>`;
     });
 
     // Images
     mdText = mdText.replace(/(?<=!)\[([\S\s]*)\]\((\S*)\)/g, (match, alt, source) => {
-        return `<img src="${source}" alt=${alt}>`;
+        return `<img src="${source} class="spider"" alt=${alt}>`;
     });
     
     // Quotes
     mdText = mdText.replace(/^\>\s+(.*)$/gm, (match, content) => {
-        return `<text style="border-left: blue solid 2px">&nbsp&nbsp${content}</text>`;
+        return `<text class="spider">${content}</text>`;
     });
 
     // Tags
     mdText = mdText.replace(/#(\w+)/g, (match, content) => {
-        return `<text class="tags">${content}</text>`;
+        return `<text class="spider-tags">${content}</text>`;
     });
 
     // unordered list
     mdText = mdText.replace(/^([\s]*)\-\s(?!\[.\])(.*)/gm, (match, whitespace, content) => {
-        return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}• ${content}</li>`;
+        return `<li class="spider-unordered" style="list-style-type: none;white-space: pre-wrap;">${whitespace}• ${content}</li>`;
     });
 
     // ordered list
     mdText = mdText.replace(/^([\s]*)(\d)\.\s(?!\[.\])(.*)/gm, (match, whitespace, index, content) => {
-        return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}${index}. ${content}</li>`;
+        return `<li  class="spider-ordered" style="list-style-type: none;white-space: pre-wrap;">${whitespace}${index}. ${content}</li>`;
     });
     
     // Task lists
     mdText = mdText.replace(/(.*)\-\s\[(.)\]+(.*)/gm, (match, whitespace, completion, content) => {
         if(completion!=" "){
-            return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}<input checked type="checkbox">${content}</li>`;
+            return `<li class="spider-tasklist" style="list-style-type: none;white-space: pre-wrap;">${whitespace}<input checked type="checkbox">${content}</li>`;
         }
         else {
-            return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}<input type="checkbox">${content}</li>`;
+            return `<li class="spider-tasklist" style="list-style-type: none;white-space: pre-wrap;">${whitespace}<input type="checkbox">${content}</li>`;
         }
     });
     
