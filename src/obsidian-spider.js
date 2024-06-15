@@ -1,5 +1,22 @@
+window.onload = function() {
+    var katex_script = document.createElement('script');
+
+    katex_script.setAttribute('src','https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.js');
+    katex_script.setAttribute('integrity', 'sha384-IolEJdmwZJpJkyCvXBnmGt8wXcP3nvRjxBjPv7/PWW7oODJhZ+qiY1sDpwgjcKLT');
+    katex_script.setAttribute('crossorigin', 'anonymous')
+
+    document.head.appendChild(katex_script);
+    
+    var katex_style_sheet = document.createElement('link')
+    katex_style_sheet.setAttribute('rel', 'stylesheet')
+    katex_style_sheet.setAttribute('href', 'https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.css');
+    katex_style_sheet.setAttribute('integrity', 'sha384-K1E1xaIzoWihlXfiT5fcmLNabsnrl+dqc0errnRwtMX14tKRA9cCYNDGnXiHEZMs');
+    katex_style_sheet.setAttribute('crossorigin', 'anonymous')
+
+    document.head.appendChild(katex_style_sheet);
+    }
+
 function spider(markdownFilePath) {
-    console.log("================================");
     fetch(markdownFilePath)
         .then(response => response.text())
             .then(text => {
@@ -16,6 +33,13 @@ function spider(markdownFilePath) {
 function markdown(mdText) {
     // Line Breaks
     mdText = mdText.replace(/\n/g, '\n');
+
+    // $ LaTeX Integration $
+    mdText = mdText.replace(/(?!\s)\$(.*)\$(?<!\s)/g, (match, content) => {
+        return katex.renderToString(content, {
+            throwOnError: false
+        });
+    });
 
     // H1-H6 # Headers
     mdText = mdText.replace(/^(#+)\s+(.*)$/gm, (match, hashes, content) => {
@@ -104,6 +128,7 @@ function markdown(mdText) {
         }
     });
     
+
     // Return the resulting HTML
     return `<div id="spider-textbox"><text>${mdText}</text></div>`;
 }
