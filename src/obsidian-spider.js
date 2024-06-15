@@ -31,15 +31,18 @@ function spider(markdownFilePath) {
 
 // Simple Markdown parser
 function markdown(mdText) {
-    // Line Breaks
-    mdText = mdText.replace(/\n/g, '\n');
-
-    // $ LaTeX Integration $
-    mdText = mdText.replace(/(?!\s)\$(.*)\$(?<!\s)/g, (match, content) => {
+    
+    // LATEX INTEGRATION // 
+    // $ Inline LaTeX $
+    mdText = mdText.replace(/(\$)([\s\S]*?)\1/g, (match, _, content) => {
         return katex.renderToString(content, {
-            throwOnError: false
+            throwOnError: true
         });
     });
+
+
+    // Line Breaks
+    mdText = mdText.replace(/\n/g, '\n');
 
     // H1-H6 # Headers
     mdText = mdText.replace(/^(#+)\s+(.*)$/gm, (match, hashes, content) => {
@@ -54,47 +57,42 @@ function markdown(mdText) {
     });
 
     // **bolds**
-    mdText = mdText.replace(/(\*\*|\_\_)+(.+)\1/gm, (match, type, content) => {
+    mdText = mdText.replace(/(\*\*|\_\_)([\s\S]*?)\1/g, (match, _, content) => {
         return `<b>${content}</b>`;
     });
 
     // *italics*
-    mdText = mdText.replace(/(\*|\_)+(.+)\1/gm, (match, type, content) => {
+    mdText = mdText.replace(/(\*|\_)([\s\S]*?)\1/g, (match, _, content) => {
         return `<i>${content}</i>`;
     });
 
     // ~~Strikethrough~~
-    mdText = mdText.replace(/~~(.+)~~/g, (match, content) => {
+    mdText = mdText.replace(/(~~)([\s\S]*?)\1/g, (match, _, content) => {
         return `<s>${content}</s>`;
     });
 
     // ==Highlights==
-    mdText = mdText.replace(/==(.+)==/g, (match, content) => {
-        return `<mark>${content}</mark>`;
-    });
-
-    // ==Highlights==
-    mdText = mdText.replace(/==(.+)==/g, (match, content) => {
+    mdText = mdText.replace(/(==)([\s\S]*?)\1/g, (match, _, content) => {
         return `<mark>${content}</mark>`;
     });
 
     // %% Comments %%
-    mdText = mdText.replace(/%%(.+)%%/g, (match, content) => {
+    mdText = mdText.replace(/(%%)([\s\S]*?)\1/g, (match, _, content) => {
         return `<text style="color: gray;">${content}</text>`;
     });
 
     // [[Internal Links]]
-    mdText = mdText.replace(/\[\[(\S+)\]\]+/g, (match, content) => {
+    mdText = mdText.replace(/\[\[([\S]*)\]\]/g, (match, content) => {
         return `<a href="${content}">${content}</a>`;
     });
 
     // [[External Links]]
-    mdText = mdText.replace(/(?<!!)\[(.+)\]\((\S+)\)/g, (match, content, link) => {
+    mdText = mdText.replace(/(?<!!)\[([\S\s]*)\]\((\S*)\)/g, (match, content, link) => {
         return `<a href="${link}">${content}</a>`;
     });
 
     // Images
-    mdText = mdText.replace(/(?<=!)\[(.+)\]\((\S+)\)/g, (match, alt, source) => {
+    mdText = mdText.replace(/(?<=!)\[([\S\s]*)\]\((\S*)\)/g, (match, alt, source) => {
         return `<img src="${source}" alt=${alt}>`;
     });
     
@@ -105,16 +103,16 @@ function markdown(mdText) {
 
     // Tags
     mdText = mdText.replace(/#(\w+)/g, (match, content) => {
-        return `<text style="line-height: 2.5;padding: 6px; border: 2px solid blue; border-radius: 20px;">${content}</text>`;
+        return `<text class="tags">${content}</text>`;
     });
 
     // unordered list
-    mdText = mdText.replace(/(.*)\-\s(?!\[.\])+(.*)/gm, (match, whitespace, content) => {
-        return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}<span style="font-size:20px;">•</span> ${content}</li>`;
+    mdText = mdText.replace(/^([\s]*)\-\s(?!\[.\])(.*)/gm, (match, whitespace, content) => {
+        return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}• ${content}</li>`;
     });
 
     // ordered list
-    mdText = mdText.replace(/(.*)(\d)\.\s+(.*)/gm, (match, whitespace, index, content) => {
+    mdText = mdText.replace(/^([\s]*)\d\.\s(?!\[.\])(.*)/gm, (match, whitespace, index, content) => {
         return `<li style="list-style-type: none;white-space: pre-wrap;">${whitespace}${index}. ${content}</li>`;
     });
     
@@ -128,7 +126,6 @@ function markdown(mdText) {
         }
     });
     
-
     // Return the resulting HTML
     return `<div id="spider-textbox"><text>${mdText}</text></div>`;
 }
